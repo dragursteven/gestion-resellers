@@ -25,8 +25,16 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-base">
       <div className="card w-full max-w-sm p-8">
-        <div className="mb-6">
-          <div className="h-1 w-10 bg-green mb-4" />
+        <div className="mb-6 flex flex-col items-center text-center">
+          <img
+            src="/logo.png"
+            alt="DRAGUR"
+            className="h-16 mb-3 object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+          <div className="h-1 w-10 bg-green mb-3" />
           <h1 className="text-xl font-bold text-ink">Gestión de Resellers</h1>
           <p className="text-sm text-muted">DRAGUR</p>
         </div>

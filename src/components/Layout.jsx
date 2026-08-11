@@ -10,7 +10,18 @@ export default function Layout({ tabs, active, onTab, children }) {
       <header className="bg-surface border-b border-line">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-6 w-1.5 bg-green" />
+            <img
+              src="/logo.png"
+              alt="DRAGUR"
+              className="h-8 object-contain"
+              onError={(e) => {
+                e.currentTarget.replaceWith(
+                  Object.assign(document.createElement("div"), {
+                    className: "h-6 w-1.5 bg-green",
+                  })
+                );
+              }}
+            />
             <div>
               <h1 className="text-base font-bold leading-none text-ink">
                 Gestión de Resellers
