@@ -1,0 +1,12 @@
+Colocá el logo de DRAGUR en esta carpeta con el nombre exacto:
+
+    logo.png
+
+- Formato recomendado: PNG con fondo transparente.
+- Tamaño sugerido: alto de 200 px o más (se ajusta solo).
+- Si el archivo se llama distinto (por ejemplo logo.jpg), o no está,
+  la app muestra el texto "Gestión de Resellers · DRAGUR" sin imagen.
+
+Una vez que subas "logo.png" a esta carpeta en GitHub, Vercel republica
+solo y el logo aparece en el login, en el encabezado y en la pestaña del
+navegador.
