@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { X, Pencil, Paperclip, ExternalLink } from "lucide-react";
 import { api } from "../lib/api.js";
 import { displayValue } from "../lib/format.js";
+import { parseCerts } from "../lib/certs.js";
 
 const MODEL_RE = /^(.+?)\s*-\s*(Comprados|Vendidos|Stock)$/i;
 const METRICS = ["Comprados", "Vendidos", "Stock"];
@@ -12,6 +13,7 @@ export default function RecordView({
   fields,
   record,
   linkColumns,
+  certField,
   onEdit,
   onClose,
 }) {
@@ -36,9 +38,13 @@ export default function RecordView({
     return {
       models: order.map((name) => ({ name, metrics: map.get(name) })),
       modelFieldNames: names,
-      normalFields: fields.filter((f) => !names.has(f.name)),
+      normalFields: fields.filter(
+        (f) => !names.has(f.name) && f.name !== certField
+      ),
     };
-  }, [fields]);
+  }, [fields, certField]);
+
+  const certRows = certField ? parseCerts(record?.fields?.[certField]) : [];
 
   const f = record?.fields || {};
 
@@ -135,6 +141,32 @@ export default function RecordView({
                             </td>
                           );
                         })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          ) : null}
+
+          {certField ? (
+            <div className="mt-6 border-t border-line pt-4">
+              <div className="field-label mb-2">Certificaciones</div>
+              {certRows.length === 0 ? (
+                <p className="text-sm text-muted">Sin certificaciones cargadas.</p>
+              ) : (
+                <table className="w-full text-sm border border-line">
+                  <thead>
+                    <tr className="bg-base border-b border-line">
+                      <th className="text-left p-2 font-semibold">Certificación</th>
+                      <th className="text-left p-2 font-semibold">N° de diploma</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {certRows.map((c, i) => (
+                      <tr key={i} className="border-b border-line">
+                        <td className="p-2">{c.nombre}</td>
+                        <td className="p-2">{c.diploma || "—"}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
-import { X, Save, Loader2, Plus } from "lucide-react";
+import { X, Save, Loader2, Plus, Trash2 } from "lucide-react";
 import Field from "./Field.jsx";
+import { parseCerts, serializeCerts } from "../lib/certs.js";
 
 // Tipos de campo editables en el formulario.
 const EDITABLE = new Set([1, 2, 3, 4, 5, 7, 13, 15, 17]);
@@ -14,12 +15,18 @@ export default function RecordForm({
   fields,
   record,
   lockedReseller,
+  certField,
   onSave,
   onClose,
 }) {
   const editable = useMemo(
     () => fields.filter((f) => EDITABLE.has(f.type)),
     [fields]
+  );
+
+  const hasCert = Boolean(certField) && editable.some((f) => f.name === certField);
+  const [certRows, setCertRows] = useState(() =>
+    hasCert ? parseCerts(record?.fields?.[certField]) : []
   );
 
   // Separa los campos de modelos del resto.
@@ -43,9 +50,11 @@ export default function RecordForm({
     return {
       models: order.map((name) => ({ name, metrics: map.get(name) })),
       modelFieldNames: modelNames,
-      normalFields: editable.filter((f) => !modelNames.has(f.name)),
+      normalFields: editable.filter(
+        (f) => !modelNames.has(f.name) && f.name !== certField
+      ),
     };
-  }, [editable]);
+  }, [editable, certField]);
 
   const [values, setValues] = useState(() => {
     const init = {};
@@ -115,6 +124,9 @@ export default function RecordForm({
             if (m.metrics[k]) finalValues[m.metrics[k]] = "";
           });
         }
+      }
+      if (hasCert) {
+        finalValues[certField] = serializeCerts(certRows);
       }
       await onSave(finalValues);
     } catch (err) {
@@ -229,6 +241,67 @@ export default function RecordForm({
                   </p>
                 ) : null}
               </div>
+            </div>
+          ) : null}
+
+          {/* Certificaciones (varias, cada una con su N° de diploma) */}
+          {hasCert ? (
+            <div className="mt-6 border-t border-line pt-4">
+              <label className="field-label">
+                Certificaciones (podés agregar varias)
+              </label>
+              <div className="space-y-2">
+                {certRows.map((row, i) => (
+                  <div key={i} className="flex gap-2 items-start">
+                    <input
+                      className="field-input"
+                      placeholder="Nombre de la certificación"
+                      value={row.nombre}
+                      onChange={(e) =>
+                        setCertRows((rows) =>
+                          rows.map((r, j) =>
+                            j === i ? { ...r, nombre: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <input
+                      className="field-input w-44"
+                      placeholder="N° de diploma"
+                      value={row.diploma}
+                      onChange={(e) =>
+                        setCertRows((rows) =>
+                          rows.map((r, j) =>
+                            j === i ? { ...r, diploma: e.target.value } : r
+                          )
+                        )
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="text-muted hover:text-red-600 mt-2"
+                      onClick={() =>
+                        setCertRows((rows) => rows.filter((_, j) => j !== i))
+                      }
+                      title="Quitar"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+                {certRows.length === 0 ? (
+                  <p className="text-sm text-muted">Sin certificaciones cargadas.</p>
+                ) : null}
+              </div>
+              <button
+                type="button"
+                className="btn-ghost mt-2"
+                onClick={() =>
+                  setCertRows((rows) => [...rows, { nombre: "", diploma: "" }])
+                }
+              >
+                <Plus size={16} /> Agregar certificación
+              </button>
             </div>
           ) : null}
 

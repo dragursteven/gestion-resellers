@@ -62,6 +62,9 @@ export const MODULE_CONFIG = {
     label: "Información del Reseller",
     resellerField: "Reseller",
     formUrl: FORM_URLS.personal,
+    // "Certificaciones" es un campo de texto que guarda una lista de
+    // (certificación + N° de diploma). El formulario lo edita como filas.
+    certField: "Certificaciones",
     listColumns: [
       "Reseller",
       "Nombre",
@@ -69,7 +72,6 @@ export const MODULE_CONFIG = {
       "Cargo/Puesto",
       "Teléfono",
       "Email",
-      "Código de Diploma",
       "Foto",
     ],
   },
@@ -112,7 +114,7 @@ export const NAV = [
   },
   { type: "data", key: "clientes", label: "Usuario Final" },
   { type: "data", key: "personal", label: "Información del Reseller" },
-  { type: "data", key: "documentos", label: "Documentos" },
+  { type: "documentos", key: "documentos", label: "Documentos" },
   { type: "data", key: "usuarios", label: "Usuarios", adminOnly: true },
   { type: "data", key: "resellers", label: "Resellers", adminOnly: true },
 ];

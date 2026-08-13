@@ -15,16 +15,24 @@ Creá una tabla nueva en el Base, llamada **Personal**, con estas columnas:
 |---|---|---|
 | Nombre | Texto | Primera columna |
 | Apellido | Texto | |
-| Reseller | Selección única | Opciones: los 6 resellers |
+| Reseller | Selección única | Opciones: los 6 resellers (ver abajo) |
 | Teléfono | Texto | |
 | Email | Texto | |
 | Fecha de Nacimiento | Fecha | |
 | Foto | Adjunto (Attachment) | Foto de la persona |
 | Cargo/Puesto | Selección única | Opciones: `Técnico`, `Comercial` |
-| Certificaciones | Texto | |
-| Código de Diploma | Texto | |
+| Certificaciones | Texto (largo) | Lo llena la app (ver nota) |
+
+Opciones del campo **Reseller**: `DRAGUR`, `Drones del Pampa`, `Drones Orientales`,
+`Javier Bruchou`, `Rotech`, `J Hartwich`.
 
 > El nombre de la columna **Cargo/Puesto** debe escribirse exactamente así (con la barra).
+
+> **Certificaciones:** ya no hace falta una columna aparte de "Código de Diploma". En la app,
+> cada empleado puede tener **varias certificaciones**, y a cada una le cargás su número de
+> diploma. Todo eso se guarda dentro del campo de texto **Certificaciones** (una por línea,
+> con el formato `Certificación | N° de diploma`). No necesitás escribir nada a mano en Lark:
+> lo edita el formulario de la app.
 
 Copiá el **table_id** (tbl...) de esta tabla.
 

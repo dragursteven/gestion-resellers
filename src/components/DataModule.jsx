@@ -395,6 +395,7 @@ export default function DataModule({ module }) {
           fields={fields}
           record={viewing}
           linkColumns={module.linkColumns}
+          certField={module.certField}
           onEdit={
             isAdmin
               ? () => {
@@ -416,6 +417,7 @@ export default function DataModule({ module }) {
           fields={fields}
           record={editing.id ? editing : null}
           lockedReseller={lockedReseller}
+          certField={module.certField}
           onSave={onSave}
           onClose={() => setEditing(null)}
         />

@@ -5,6 +5,7 @@ import Layout from "./components/Layout.jsx";
 import DataModule from "./components/DataModule.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import ReportesMensual from "./components/ReportesMensual.jsx";
+import Documentos from "./components/Documentos.jsx";
 import { NAV, MODULE_CONFIG } from "./lib/tableConfig.js";
 
 export default function App() {
@@ -33,6 +34,8 @@ function renderContent(entry, subTabs, setSubTabs) {
   if (!entry) return null;
 
   if (entry.type === "dashboard") return <Dashboard />;
+
+  if (entry.type === "documentos") return <Documentos />;
 
   if (entry.type === "data") {
     return <DataModule key={entry.key} module={MODULE_CONFIG[entry.key]} />;
