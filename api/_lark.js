@@ -10,6 +10,8 @@ const TABLE_ENV = {
   reportes: "TABLE_REPORTES_SEMANALES",
   clientes: "TABLE_CLIENTES_FINALES",
   demostraciones: "TABLE_DEMOSTRACIONES",
+  personal: "TABLE_PERSONAL",
+  documentos: "TABLE_DOCUMENTOS",
 };
 
 export function tableId(key) {

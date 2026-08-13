@@ -17,3 +17,11 @@ export function exportToExcel(fileName, columns, rows, fieldTypes) {
   XLSX.utils.book_append_sheet(wb, ws, "Datos");
   XLSX.writeFile(wb, `${fileName}.xlsx`);
 }
+
+// Exporta un arreglo de objetos planos (ya calculados) a .xlsx.
+export function exportRows(fileName, rows, header) {
+  const ws = XLSX.utils.json_to_sheet(rows, header ? { header } : undefined);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Datos");
+  XLSX.writeFile(wb, `${fileName}.xlsx`);
+}

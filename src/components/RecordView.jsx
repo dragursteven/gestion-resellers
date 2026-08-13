@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { X, Pencil, Paperclip } from "lucide-react";
+import { X, Pencil, Paperclip, ExternalLink } from "lucide-react";
 import { api } from "../lib/api.js";
 import { displayValue } from "../lib/format.js";
 
@@ -7,7 +7,15 @@ const MODEL_RE = /^(.+?)\s*-\s*(Comprados|Vendidos|Stock)$/i;
 const METRICS = ["Comprados", "Vendidos", "Stock"];
 
 // Ficha de SOLO LECTURA de un registro, con la misma estética del formulario.
-export default function RecordView({ title, fields, record, onEdit, onClose }) {
+export default function RecordView({
+  title,
+  fields,
+  record,
+  linkColumns,
+  onEdit,
+  onClose,
+}) {
+  const linkSet = new Set(linkColumns || []);
   const { models, modelFieldNames, normalFields } = useMemo(() => {
     const map = new Map();
     const order = [];
@@ -72,6 +80,19 @@ export default function RecordView({ title, fields, record, onEdit, onClose }) {
                   <dd className="text-sm text-ink border-b border-line pb-1 min-h-[1.5rem]">
                     {isAttach ? (
                       <AttachmentList value={value} />
+                    ) : linkSet.has(field.name) ? (
+                      String(value ?? "").trim() ? (
+                        <a
+                          href={String(value).trim()}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-green hover:underline inline-flex items-center gap-1"
+                        >
+                          <ExternalLink size={13} /> Abrir
+                        </a>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )
                     ) : (
                       displayValue(value, field.type) || (
                         <span className="text-muted">—</span>

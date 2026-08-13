@@ -61,6 +61,11 @@ export default function DataModule({ module }) {
     return m;
   }, [fields]);
 
+  const linkCols = useMemo(
+    () => new Set(module.linkColumns || []),
+    [module.linkColumns]
+  );
+
   const columns = useMemo(() => {
     if (module.listColumns) {
       return module.listColumns.filter((c) => typeMap.has(c));
@@ -279,7 +284,7 @@ export default function DataModule({ module }) {
                     </td>
                     {columns.map((c) => (
                       <td key={c} className="p-2 align-top">
-                        {renderCell(r.fields?.[c], typeMap.get(c))}
+                        {renderCell(r.fields?.[c], typeMap.get(c), linkCols.has(c))}
                       </td>
                     ))}
                     <td className="p-2">
@@ -370,7 +375,7 @@ export default function DataModule({ module }) {
                     <div key={c} className="flex justify-between gap-3">
                       <dt className="text-xs uppercase text-muted">{c}</dt>
                       <dd className="text-sm text-ink text-right">
-                        {renderCell(r.fields?.[c], typeMap.get(c))}
+                        {renderCell(r.fields?.[c], typeMap.get(c), linkCols.has(c))}
                       </dd>
                     </div>
                   ))}
@@ -389,6 +394,7 @@ export default function DataModule({ module }) {
           title={`Ver · ${module.label}`}
           fields={fields}
           record={viewing}
+          linkColumns={module.linkColumns}
           onEdit={
             isAdmin
               ? () => {
@@ -419,7 +425,22 @@ export default function DataModule({ module }) {
 }
 
 // Celda: los adjuntos se muestran como links vía /api/media.
-function renderCell(value, type) {
+function renderCell(value, type, isLink) {
+  // Columna de texto marcada como link -> botón "Abrir".
+  if (isLink) {
+    const url = String(value ?? "").trim();
+    if (!url) return "";
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="btn-ghost !px-3 !py-1 !text-xs"
+      >
+        <ExternalLink size={13} /> Abrir
+      </a>
+    );
+  }
   if (type === 17 && Array.isArray(value)) {
     if (value.length === 0) return "";
     return (

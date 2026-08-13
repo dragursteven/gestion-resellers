@@ -57,6 +57,45 @@ export function exportValue(value, type) {
   return displayValue(value, type);
 }
 
+// --- utilidades de mes ---
+export function msFrom(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const ms = typeof value === "number" ? value : Date.parse(String(value));
+  return Number.isNaN(ms) ? null : ms;
+}
+
+export function monthKeyFromMs(ms) {
+  if (ms == null) return "";
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+const MESES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
+export function monthLabel(key) {
+  if (!key) return "";
+  const [y, m] = key.split("-");
+  return `${MESES[Number(m) - 1] || m} ${y}`;
+}
+
 export function toDateInput(value) {
   if (!value) return "";
   const ms = typeof value === "number" ? value : Number(value);

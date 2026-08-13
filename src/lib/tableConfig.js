@@ -1,28 +1,19 @@
-// Configuración de cada módulo/pestaña.
-//
-// - key: clave lógica de la tabla (coincide con el backend)
-// - label: nombre de la pestaña
-// - resellerField: nombre de la columna que identifica el Reseller (para filtrar).
-//     null si la tabla no se filtra por reseller (ej: la propia tabla Resellers).
-// - listColumns: columnas a mostrar en la lista. Si es null, se muestran todas.
-// - adminOnly: si true, la pestaña solo aparece para el rol Admin.
-// - formUrl: link del Formulario de Lark para el botón "Cargar".
-//     Dejalo vacío ("") hasta tener el link; el botón se oculta si está vacío.
+// Configuración de módulos de datos y de la navegación (menús).
 
 export const FORM_URLS = {
   reportes: "",
   clientes: "",
   demostraciones: "",
+  personal: "",
 };
 
-export const MODULES = [
-  {
+// Config por tabla (usada por DataModule).
+export const MODULE_CONFIG = {
+  reportes: {
     key: "reportes",
     label: "Reportes Semanales",
     resellerField: "Reseller",
     formUrl: FORM_URLS.reportes,
-    // La lista muestra un resumen limpio. El detalle completo (incluidos los
-    // modelos) se ve con el botón "Ver". La exportación a Excel incluye TODO.
     listColumns: [
       "Reseller",
       "Semana desde",
@@ -34,9 +25,9 @@ export const MODULES = [
       "Potenciales cotizados",
     ],
   },
-  {
+  clientes: {
     key: "clientes",
-    label: "Clientes Finales",
+    label: "Usuario Final",
     resellerField: "Reseller",
     formUrl: FORM_URLS.clientes,
     listColumns: [
@@ -49,7 +40,7 @@ export const MODULES = [
       "Carta Compromiso",
     ],
   },
-  {
+  demostraciones: {
     key: "demostraciones",
     label: "Demostraciones",
     resellerField: "Reseller",
@@ -66,18 +57,62 @@ export const MODULES = [
       "Tipo de demo",
     ],
   },
-  {
+  personal: {
+    key: "personal",
+    label: "Información del Reseller",
+    resellerField: "Reseller",
+    formUrl: FORM_URLS.personal,
+    listColumns: [
+      "Reseller",
+      "Nombre",
+      "Apellido",
+      "Cargo/Puesto",
+      "Teléfono",
+      "Email",
+      "Código de Diploma",
+      "Foto",
+    ],
+  },
+  documentos: {
+    key: "documentos",
+    label: "Documentos",
+    resellerField: null,
+    listColumns: ["Nombre", "Categoría", "Archivo", "Activo"],
+    // Columnas de texto que contienen un link: se muestran como botón "Abrir".
+    linkColumns: ["Archivo"],
+  },
+  usuarios: {
     key: "usuarios",
     label: "Usuarios",
     resellerField: null,
     adminOnly: true,
     listColumns: ["Nombre", "Email", "Rol", "Reseller", "Activo"],
   },
-  {
+  resellers: {
     key: "resellers",
     label: "Resellers",
     resellerField: null,
     adminOnly: true,
     listColumns: ["Nombre del Reseller", "Activo"],
   },
+};
+
+// Navegación (pestañas superiores). Cada entrada define su "tipo" de contenido.
+export const NAV = [
+  { type: "dashboard", key: "inicio", label: "Menú Principal" },
+  { type: "data", key: "demostraciones", label: "Demostraciones" },
+  {
+    type: "group",
+    key: "reportes",
+    label: "Reportes",
+    tabs: [
+      { type: "data", key: "reportes", label: "Semanal" },
+      { type: "mensual", key: "mensual", label: "Mensual" },
+    ],
+  },
+  { type: "data", key: "clientes", label: "Usuario Final" },
+  { type: "data", key: "personal", label: "Información del Reseller" },
+  { type: "data", key: "documentos", label: "Documentos" },
+  { type: "data", key: "usuarios", label: "Usuarios", adminOnly: true },
+  { type: "data", key: "resellers", label: "Resellers", adminOnly: true },
 ];
