@@ -19,6 +19,11 @@ import RecordView from "./RecordView.jsx";
 
 export default function DataModule({ module }) {
   const { isAdmin, user } = useAuth();
+
+  // Permisos según rol. El Distribuidor puede crear/editar solo si el módulo lo permite.
+  const canCreate = isAdmin || Boolean(module.distributorCan?.create);
+  const canEdit = isAdmin || Boolean(module.distributorCan?.edit);
+  const canDelete = isAdmin; // borrar siempre solo Admin
   const [fields, setFields] = useState([]);
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -185,7 +190,7 @@ export default function DataModule({ module }) {
           <Download size={16} /> Exportar Excel
         </button>
 
-        {isAdmin ? (
+        {canCreate ? (
           <button
             className="btn-primary"
             onClick={() => setEditing({})}
@@ -296,24 +301,24 @@ export default function DataModule({ module }) {
                         >
                           <Eye size={16} />
                         </button>
-                        {isAdmin ? (
-                          <>
-                            <button
-                              className="text-muted hover:text-green"
-                              onClick={() => setEditing(r)}
-                              title="Editar"
-                            >
-                              <Pencil size={16} />
-                            </button>
-                            <button
-                              className="text-muted hover:text-red-600"
-                              onClick={() => onDelete(r.id)}
-                              disabled={busy}
-                              title="Eliminar"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </>
+                        {canEdit ? (
+                          <button
+                            className="text-muted hover:text-green"
+                            onClick={() => setEditing(r)}
+                            title="Editar"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                        ) : null}
+                        {canDelete ? (
+                          <button
+                            className="text-muted hover:text-red-600"
+                            onClick={() => onDelete(r.id)}
+                            disabled={busy}
+                            title="Eliminar"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         ) : null}
                       </div>
                     </td>
@@ -352,21 +357,21 @@ export default function DataModule({ module }) {
                     >
                       <Eye size={16} />
                     </button>
-                    {isAdmin ? (
-                      <>
-                        <button
-                          className="text-muted hover:text-green"
-                          onClick={() => setEditing(r)}
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          className="text-muted hover:text-red-600"
-                          onClick={() => onDelete(r.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </>
+                    {canEdit ? (
+                      <button
+                        className="text-muted hover:text-green"
+                        onClick={() => setEditing(r)}
+                      >
+                        <Pencil size={16} />
+                      </button>
+                    ) : null}
+                    {canDelete ? (
+                      <button
+                        className="text-muted hover:text-red-600"
+                        onClick={() => onDelete(r.id)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     ) : null}
                   </div>
                 </div>
@@ -397,7 +402,7 @@ export default function DataModule({ module }) {
           linkColumns={module.linkColumns}
           certField={module.certField}
           onEdit={
-            isAdmin
+            canEdit
               ? () => {
                   const r = viewing;
                   setViewing(null);

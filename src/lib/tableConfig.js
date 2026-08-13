@@ -14,6 +14,8 @@ export const MODULE_CONFIG = {
     label: "Reportes Semanales",
     resellerField: "Reseller",
     formUrl: FORM_URLS.reportes,
+    // El Distribuidor puede REGISTRAR (crear) de su reseller. Editar/borrar = solo Admin.
+    distributorCan: { create: true },
     listColumns: [
       "Reseller",
       "Semana desde",
@@ -30,6 +32,7 @@ export const MODULE_CONFIG = {
     label: "Usuario Final",
     resellerField: "Reseller",
     formUrl: FORM_URLS.clientes,
+    distributorCan: { create: true },
     listColumns: [
       "Nombre de cliente final",
       "Reseller",
@@ -45,6 +48,7 @@ export const MODULE_CONFIG = {
     label: "Demostraciones",
     resellerField: "Reseller",
     formUrl: FORM_URLS.demostraciones,
+    distributorCan: { create: true },
     listColumns: [
       "Nombre Dealer",
       "Reseller",
@@ -62,6 +66,8 @@ export const MODULE_CONFIG = {
     label: "Información del Reseller",
     resellerField: "Reseller",
     formUrl: FORM_URLS.personal,
+    // El Distribuidor puede agregar y editar el personal de su sucursal. Borrar = solo Admin.
+    distributorCan: { create: true, edit: true },
     // "Certificaciones" es un campo de texto que guarda una lista de
     // (certificación + N° de diploma). El formulario lo edita como filas.
     certField: "Certificaciones",

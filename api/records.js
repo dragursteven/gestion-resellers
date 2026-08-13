@@ -20,13 +20,53 @@ function getParam(req, name) {
   return new URL(req.url, "http://x").searchParams.get(name);
 }
 
+// Qué puede hacer el rol Distribuidor (siempre solo de su propio reseller).
+// Crear: Reportes, Demostraciones, Usuario Final y Personal.
+// Editar: solo Personal (Información del Reseller). Borrar: nunca.
+const DIST_CREATE = new Set(["reportes", "demostraciones", "clientes", "personal"]);
+const DIST_EDIT = new Set(["personal"]);
+
+function getRol(req) {
+  return String(req.headers["x-user-rol"] || "").toLowerCase();
+}
+function getReseller(req) {
+  try {
+    return decodeURIComponent(String(req.headers["x-user-reseller"] || ""));
+  } catch {
+    return "";
+  }
+}
+
 function requireAdmin(req, res) {
-  const rol = String(req.headers["x-user-rol"] || "");
-  if (rol.toLowerCase() !== "admin") {
+  if (getRol(req) !== "admin") {
     res.status(403).json({ ok: false, error: "Solo el rol Admin puede modificar" });
     return false;
   }
   return true;
+}
+
+// Autoriza una escritura. action = "create" | "edit".
+// Admin siempre. Distribuidor según los sets, y forzando su propio Reseller.
+function authorizeWrite(req, res, key, body, action) {
+  const rol = getRol(req);
+  if (rol === "admin") return true;
+  if (rol === "distribuidor") {
+    const allowed = action === "create" ? DIST_CREATE.has(key) : DIST_EDIT.has(key);
+    if (!allowed) {
+      res.status(403).json({ ok: false, error: "No autorizado para esta acción" });
+      return false;
+    }
+    const reseller = getReseller(req);
+    if (!reseller) {
+      res.status(403).json({ ok: false, error: "Reseller no identificado" });
+      return false;
+    }
+    body.fields = body.fields || {};
+    body.fields.Reseller = reseller; // no puede escribir para otro reseller
+    return true;
+  }
+  res.status(403).json({ ok: false, error: "No autorizado para esta acción" });
+  return false;
 }
 
 export default async function handler(req, res) {
@@ -52,8 +92,8 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      if (!requireAdmin(req, res)) return;
       const body = await readBody(req);
+      if (!authorizeWrite(req, res, key, body, "create")) return;
       const meta = await getFields(key);
       const fields = toLarkFields(meta, body.fields);
       const data = await lark(base, {
@@ -64,10 +104,10 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PUT") {
-      if (!requireAdmin(req, res)) return;
       const rid = getParam(req, "id");
       if (!rid) return res.status(400).json({ ok: false, error: "Falta ?id" });
       const body = await readBody(req);
+      if (!authorizeWrite(req, res, key, body, "edit")) return;
       const meta = await getFields(key);
       const fields = toLarkFields(meta, body.fields);
       const data = await lark(`${base}/${rid}`, {

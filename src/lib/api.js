@@ -1,21 +1,22 @@
 // Cliente HTTP hacia las funciones /api. Incluye el rol del usuario en el header
 // para que el backend pueda exigir Admin en las escrituras.
 
-function currentRol() {
+function currentUser() {
   try {
-    const u = JSON.parse(localStorage.getItem("gr_user") || "null");
-    return u?.rol || "";
+    return JSON.parse(localStorage.getItem("gr_user") || "null");
   } catch {
-    return "";
+    return null;
   }
 }
 
 async function request(path, { method = "GET", body } = {}) {
+  const u = currentUser();
   const res = await fetch(path, {
     method,
     headers: {
       "Content-Type": "application/json",
-      "x-user-rol": currentRol(),
+      "x-user-rol": u?.rol || "",
+      "x-user-reseller": encodeURIComponent(u?.reseller || ""),
     },
     body: body ? JSON.stringify(body) : undefined,
   });
